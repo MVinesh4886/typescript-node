@@ -2,6 +2,9 @@ import { Router } from "express";
 
 import { Todo } from "../models/todo";
 
+type RequestBody = { text: string };
+type RequestParams = { id: string };
+
 const todos: Todo[] = [];
 
 const todosRouter = Router();
@@ -11,9 +14,10 @@ todosRouter.get("/", (req, res, next) => {
 });
 
 todosRouter.post("/todo", (req, res, next) => {
+  const body = req.body as RequestBody;
   const newTodo: Todo = {
     id: new Date().toISOString(),
-    text: req.body.text,
+    text: body.text,
   };
 
   todos.push(newTodo);
@@ -22,7 +26,9 @@ todosRouter.post("/todo", (req, res, next) => {
 });
 
 todosRouter.put("/todo/:id", (req, res, next) => {
-  const todoId = req.params.id;
+  const params = req.params as RequestParams;
+  const body = req.body as RequestBody;
+  const todoId = params.id;
   const todoIndex = todos.findIndex((todo) => todo.id === todoId);
 
   if (todoIndex === -1) {
@@ -31,7 +37,7 @@ todosRouter.put("/todo/:id", (req, res, next) => {
 
   const updatedTodo: Todo = {
     id: todoId,
-    text: req.body.text,
+    text: body.text,
   };
 
   todos[todoIndex] = updatedTodo;
@@ -42,7 +48,8 @@ todosRouter.put("/todo/:id", (req, res, next) => {
 });
 
 todosRouter.delete("/todo/:id", (req, res, next) => {
-  const todoId = req.params.id;
+  const params = req.params as RequestParams;
+  const todoId = params.id;
   const todoIndex = todos.findIndex((todo) => todo.id === todoId);
 
   if (todoIndex === -1) {

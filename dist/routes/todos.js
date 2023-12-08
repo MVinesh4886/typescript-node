@@ -7,22 +7,25 @@ todosRouter.get("/", (req, res, next) => {
     res.status(200).json({ todos });
 });
 todosRouter.post("/todo", (req, res, next) => {
+    const body = req.body;
     const newTodo = {
         id: new Date().toISOString(),
-        text: req.body.text,
+        text: body.text,
     };
     todos.push(newTodo);
     res.status(200).json(newTodo);
 });
 todosRouter.put("/todo/:id", (req, res, next) => {
-    const todoId = req.params.id;
+    const params = req.params;
+    const body = req.body;
+    const todoId = params.id;
     const todoIndex = todos.findIndex((todo) => todo.id === todoId);
     if (todoIndex === -1) {
         return res.status(404).json({ message: "Todo not found" });
     }
     const updatedTodo = {
         id: todoId,
-        text: req.body.text,
+        text: body.text,
     };
     todos[todoIndex] = updatedTodo;
     res
@@ -30,7 +33,8 @@ todosRouter.put("/todo/:id", (req, res, next) => {
         .json({ message: "Todo updated successfully", todo: updatedTodo });
 });
 todosRouter.delete("/todo/:id", (req, res, next) => {
-    const todoId = req.params.id;
+    const params = req.params;
+    const todoId = params.id;
     const todoIndex = todos.findIndex((todo) => todo.id === todoId);
     if (todoIndex === -1) {
         return res.status(404).json({ message: "Todo not found" });
